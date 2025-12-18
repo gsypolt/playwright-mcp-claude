@@ -189,6 +189,10 @@ test.describe('Agent File Validation', () => {
         .access(dirPath)
         .then(() => true)
         .catch(() => false);
+
+      if (!exists) {
+        throw new Error(`Missing required test directory: tests/${dir} (full path: ${dirPath})`);
+      }
       expect(exists).toBe(true);
     }
   });

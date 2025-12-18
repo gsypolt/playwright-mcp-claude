@@ -20,6 +20,10 @@ jobs:
   agent-tests:
     name: Agent Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
