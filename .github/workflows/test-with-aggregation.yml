@@ -1,0 +1,264 @@
+name: Test with Results Aggregation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test-with-database:
+    name: Test and Store in Database
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: playwright_results
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Initialize Database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -f database/schema.sql
+
+      - name: Run tests with Database Reporter
+        run: npm test
+        env:
+          CI: true
+          AGGREGATION_METHOD: database
+          DB_TYPE: postgresql
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: playwright_results
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SSL: false
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          BUILD_ID: ${{ github.run_id }}
+          CI_PROVIDER: github
+          ENVIRONMENT: ci
+
+      - name: Query Test Results
+        run: |
+          echo "Querying test results from database..."
+          PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -c \
+            "SELECT run_id, status, total_tests, passed_tests, failed_tests, flaky_tests FROM test_runs ORDER BY started_at DESC LIMIT 1;"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-database
+          path: test-results/
+          retention-days: 30
+
+  test-with-json:
+    name: Test and Export JSON
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: playwright_results
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Initialize Database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -f database/schema.sql
+
+      - name: Run tests with JSON Reporter
+        run: npm test
+        env:
+          CI: true
+
+      - name: Ingest JSON Results to Database
+        run: |
+          npx ts-node scripts/ingest-results.ts test-results/results.json
+        env:
+          AGGREGATION_METHOD: database
+          DB_TYPE: postgresql
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: playwright_results
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          BUILD_ID: ${{ github.run_id }}
+
+      - name: Upload JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-json
+          path: test-results/results.json
+          retention-days: 90
+
+  test-with-testdino:
+    name: Test and Upload to TestDino
+    runs-on: ubuntu-latest
+    if: ${{ secrets.TESTDINO_API_KEY != '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests with TestDino Reporter
+        run: npm test
+        env:
+          CI: true
+          AGGREGATION_METHOD: testdino
+          TESTDINO_API_KEY: ${{ secrets.TESTDINO_API_KEY }}
+          TESTDINO_PROJECT_ID: ${{ secrets.TESTDINO_PROJECT_ID }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          BUILD_ID: ${{ github.run_id }}
+          ENVIRONMENT: ci
+
+      - name: Upload TestDino results (backup)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testdino-results
+          path: test-results/testdino-results.json
+          retention-days: 30
+
+  analyze-results:
+    name: Analyze Test Results
+    runs-on: ubuntu-latest
+    needs: [test-with-database]
+    if: always()
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: playwright_results
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Initialize Database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -f database/schema.sql
+
+      - name: Generate Test Summary
+        id: summary
+        run: |
+          SUMMARY=$(PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -t -c \
+            "SELECT
+              COUNT(*) as total_runs,
+              SUM(passed_tests) as total_passed,
+              SUM(failed_tests) as total_failed,
+              ROUND(100.0 * SUM(passed_tests) / NULLIF(SUM(total_tests), 0), 2) as pass_rate
+            FROM test_runs
+            WHERE started_at >= CURRENT_DATE - INTERVAL '7 days';")
+
+          echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check for Flaky Tests
+        run: |
+          echo "## Flaky Tests Detected" >> $GITHUB_STEP_SUMMARY
+          PGPASSWORD=postgres psql -h localhost -U postgres -d playwright_results -c \
+            "SELECT
+              tc.title,
+              tc.file_path,
+              ft.flake_rate,
+              ft.occurrences
+            FROM flaky_tests ft
+            JOIN test_cases tc ON ft.test_case_id = tc.id
+            WHERE ft.flake_rate > 10
+            ORDER BY ft.flake_rate DESC
+            LIMIT 10;" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR with Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const summary = `${{ steps.summary.outputs.summary }}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🧪 Test Results\n\n${summary}`
+            });

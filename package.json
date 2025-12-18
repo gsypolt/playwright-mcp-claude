@@ -1,0 +1,80 @@
+{
+  "name": "playwright-mcp-claude",
+  "version": "1.0.0",
+  "description": "AI-powered test generation using Claude and Playwright MCP Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:api": "playwright test tests/api",
+    "test:performance": "playwright test tests/performance",
+    "test:storybook": "playwright test tests/storybook",
+    "test:component": "playwright test tests/components",
+    "test:agent": "playwright test tests/agent",
+    "test:agents": "./scripts/test-agents.sh",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
+    "prepare": "husky install",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch",
+    "db:setup": "docker-compose up -d postgres && sleep 5 && docker-compose exec -T postgres psql -U postgres -d playwright_results -f /docker-entrypoint-initdb.d/schema.sql",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:reset": "docker-compose down -v && npm run db:setup",
+    "grafana:start": "docker-compose up -d grafana",
+    "grafana:open": "open http://localhost:3000",
+    "ingest": "ts-node scripts/ingest-results.ts",
+    "testdino:upload": "ts-node -e \"require('./reporters/testdino-reporter').uploadToTestDino('test-results/testdino-results.json')\"",
+    "setup:aggregation": "ts-node prompts/aggregation-agent.ts",
+    "setup:github": "./scripts/setup-github.sh"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "claude",
+    "mcp",
+    "ai",
+    "test-automation",
+    "e2e",
+    "api-testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.19.3",
+    "@types/pg": "^8.16.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-playwright": "^1.6.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.5",
+    "standard-version": "^9.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "mysql2": "^3.9.0",
+    "pg": "^8.11.0"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}

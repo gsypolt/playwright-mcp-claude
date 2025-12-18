@@ -1,0 +1,11 @@
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/.env
+dist/
+*.log
+.DS_Store
+test-results.json
+junit.xml

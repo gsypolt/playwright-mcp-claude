@@ -1,0 +1,132 @@
+playwright-mcp-claude/
+│
+├── 📁 .github/
+│   ├── 📁 ISSUE_TEMPLATE/
+│   │   ├── bug_report.md              # Bug report template
+│   │   └── feature_request.md         # Feature request template
+│   ├── 📁 workflows/
+│   │   ├── ci.yml                     # CI workflow (lint, test)
+│   │   └── release.yml                # Release workflow (version, tag, publish)
+│   └── pull_request_template.md       # PR template
+│
+├── 📁 .husky/
+│   └── pre-commit                     # Pre-commit hook (lint-staged)
+│
+├── 📁 components/                     # Reusable page components
+│   ├── base-page.ts                   # Base page object with common methods
+│   ├── form-component.ts              # Form interaction helper
+│   ├── modal-component.ts             # Modal/dialog handler
+│   └── table-component.ts             # Table data extraction
+│
+├── 📁 config/                         # Configuration files (empty, for future use)
+│
+├── 📁 helpers/                        # Test helper functions
+│   ├── api.ts                         # API testing helpers (ApiHelper class)
+│   ├── auth.ts                        # Authentication helpers (Google, Microsoft, generic)
+│   └── performance.ts                 # Performance testing helpers (Web Vitals)
+│
+├── 📁 prompts/                        # AI prompts and test generation
+│   ├── catalog.md                     # Comprehensive AI prompt catalog
+│   └── test-agent.ts                  # Interactive test generator CLI
+│
+├── 📁 scripts/
+│   └── verify-setup.sh                # Setup verification script
+│
+├── 📁 tests/                          # Test files
+│   ├── 📁 api/
+│   │   └── example.api.spec.ts        # Example API tests
+│   ├── 📁 ui/
+│   │   └── example.ui.spec.ts         # Example UI tests
+│   ├── 📁 performance/
+│   │   └── example.performance.spec.ts # Example performance tests
+│   ├── 📁 storybook/                  # Storybook component tests
+│   ├── 📁 components/                 # Web component tests
+│   └── 📁 agent/
+│       └── test-agent.spec.ts         # Tests for the test agent
+│
+├── 📄 .env.example                    # Environment variables template
+├── 📄 .eslintrc.json                  # ESLint configuration
+├── 📄 .gitignore                      # Git ignore rules
+├── 📄 .prettierignore                 # Prettier ignore rules
+├── 📄 .prettierrc.json                # Prettier configuration
+├── 📄 .versionrc.json                 # Version/release configuration
+│
+├── 📘 CHANGELOG.md                    # Version changelog
+├── 📘 CONTRIBUTING.md                 # Contribution guidelines
+├── 📘 FEATURES.md                     # Feature overview
+├── 📘 LICENSE                         # MIT License
+├── 📘 PROJECT_SUMMARY.md              # Project summary
+├── 📘 PROJECT_TREE.txt                # This file - project structure
+├── 📘 QUICKSTART.md                   # Quick start guide
+├── 📘 README.md                       # Main documentation
+├── 📘 SETUP_CHECKLIST.md              # Setup checklist
+│
+├── 🔧 package.json                    # Dependencies and scripts
+├── 🔧 playwright.config.ts            # Playwright configuration
+└── 🔧 tsconfig.json                   # TypeScript configuration
+
+Key Components:
+═══════════════
+
+🎯 Test Types Supported:
+  • API Tests          - REST/GraphQL endpoint testing
+  • UI Tests           - E2E browser testing
+  • Performance Tests  - Load time, Web Vitals
+  • Storybook Tests    - Component isolation
+  • Component Tests    - Individual component testing
+
+🔐 Authentication:
+  • Generic Login      - Email/password
+  • Google OAuth       - Google Sign-In
+  • Microsoft OAuth    - Microsoft authentication
+
+📦 Reusable Components:
+  • BasePage          - Common page operations
+  • FormComponent     - Form interactions
+  • TableComponent    - Table data handling
+  • ModalComponent    - Dialog management
+
+🤖 AI Features:
+  • Test Agent        - Interactive CLI generator
+  • Prompt Catalog    - 20+ AI prompts
+  • Template System   - Pre-built test templates
+
+⚙️ DevOps:
+  • GitHub Actions    - CI/CD workflows
+  • ESLint           - Code linting
+  • Prettier         - Code formatting
+  • Husky            - Git hooks
+  • Standard-Version - Semantic versioning
+
+NPM Scripts:
+═══════════
+
+Testing:
+  npm test                    - Run all tests
+  npm run test:ui             - UI mode
+  npm run test:api            - API tests only
+  npm run test:performance    - Performance tests
+  npm run test:headed         - Headed mode
+  npm run report              - View HTML report
+
+Code Quality:
+  npm run lint                - Check linting
+  npm run lint:fix            - Fix linting
+  npm run format              - Format code
+  npm run format:check        - Check formatting
+
+Release:
+  npm run release             - Create release
+  npm run release:patch       - Patch version
+  npm run release:minor       - Minor version
+  npm run release:major       - Major version
+
+Documentation:
+═════════════
+  README.md           - Comprehensive guide
+  QUICKSTART.md       - 5-minute setup
+  FEATURES.md         - Feature overview
+  CONTRIBUTING.md     - How to contribute
+  PROJECT_SUMMARY.md  - Technical summary
+  SETUP_CHECKLIST.md  - Setup verification
+  prompts/catalog.md  - AI prompt examples

@@ -1,0 +1,190 @@
+name: Test Agents
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'prompts/**'
+      - 'tests/agent/**'
+      - 'scripts/test-agents.sh'
+      - '.github/workflows/test-agents.yml'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'prompts/**'
+      - 'tests/agent/**'
+      - 'scripts/test-agents.sh'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  agent-tests:
+    name: Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Make test script executable
+        run: chmod +x scripts/test-agents.sh
+
+      - name: Run Agent Test Suite
+        run: npm run test:agents
+        id: agent-tests
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-test-results
+          path: test-results/
+          retention-days: 30
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-test-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Comment on PR (Success)
+        if: success() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## ✅ Agent Tests Passed\n\nAll agent integration tests completed successfully!\n\n- ✅ Test agent working correctly\n- ✅ Aggregation agent working correctly\n- ✅ All file validations passed\n- ✅ All directory checks passed\n\nView the [detailed results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).'
+            })
+
+      - name: Comment on PR (Failure)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## ❌ Agent Tests Failed\n\nSome agent tests did not pass. Please review the failures and fix them.\n\nView the [detailed results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).'
+            })
+
+  verify-agents-executable:
+    name: Verify Agents Start
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify test-agent starts
+        run: |
+          timeout 5s npx ts-node prompts/test-agent.ts > /tmp/test-agent-output.txt 2>&1 || EXIT_CODE=$?
+          if [ "$EXIT_CODE" = "124" ]; then
+            echo "✓ Test agent started successfully (timed out as expected)"
+            cat /tmp/test-agent-output.txt | grep -q "Playwright Test Generator" && echo "✓ Menu displayed correctly"
+            exit 0
+          else
+            echo "✗ Test agent failed to start"
+            cat /tmp/test-agent-output.txt
+            exit 1
+          fi
+
+      - name: Verify aggregation-agent starts
+        run: |
+          timeout 5s npx ts-node prompts/aggregation-agent.ts > /tmp/aggregation-agent-output.txt 2>&1 || EXIT_CODE=$?
+          if [ "$EXIT_CODE" = "124" ]; then
+            echo "✓ Aggregation agent started successfully (timed out as expected)"
+            cat /tmp/aggregation-agent-output.txt | grep -q "Test Results Aggregation" && echo "✓ Menu displayed correctly"
+            exit 0
+          else
+            echo "✗ Aggregation agent failed to start"
+            cat /tmp/aggregation-agent-output.txt
+            exit 1
+          fi
+
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [agent-tests, verify-agents-executable, type-check]
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          echo "## Agent Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.agent-tests.result }}" = "success" ]; then
+            echo "✅ Agent Integration Tests: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Agent Integration Tests: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.verify-agents-executable.result }}" = "success" ]; then
+            echo "✅ Agent Executability: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Agent Executability: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.type-check.result }}" = "success" ]; then
+            echo "✅ TypeScript Type Check: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ TypeScript Type Check: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.agent-tests.result }}" = "success" ] && \
+             [ "${{ needs.verify-agents-executable.result }}" = "success" ] && \
+             [ "${{ needs.type-check.result }}" = "success" ]; then
+            echo "### ✅ All agent tests passed!" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          else
+            echo "### ❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

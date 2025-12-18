@@ -1,0 +1,23 @@
+# Grafana PostgreSQL Datasource Configuration
+# Place this file in /etc/grafana/provisioning/datasources/
+
+apiVersion: 1
+
+datasources:
+  - name: Playwright Results DB
+    type: postgres
+    access: proxy
+    url: ${DB_HOST}:${DB_PORT}
+    database: ${DB_NAME}
+    user: ${DB_USER}
+    secureJsonData:
+      password: ${DB_PASSWORD}
+    jsonData:
+      sslmode: ${DB_SSL_MODE:disable}
+      maxOpenConns: 10
+      maxIdleConns: 5
+      connMaxLifetime: 14400
+      postgresVersion: 1300
+      timescaledb: false
+    editable: true
+    isDefault: true
