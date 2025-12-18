@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { TestAgent, TestType } from '@/prompts/test-agent';
+import { TestType } from '@/prompts/test-agent';
 
 test.describe('Test Agent', () => {
   test('should generate API test template', async () => {

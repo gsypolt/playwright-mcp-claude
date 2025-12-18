@@ -9,6 +9,7 @@ import {
 import { getAggregationConfig, TestDinoConfig } from '../config/aggregation.config';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 interface TestDinoResult {
   projectId: string;
@@ -76,7 +77,7 @@ export class TestDinoReporter implements Reporter {
     this.outputPath = path.join(process.cwd(), 'test-results', 'testdino-results.json');
   }
 
-  async onBegin(config: FullConfig, suite: Suite) {
+  async onBegin(_config: FullConfig, _suite: Suite) {
     this.startTime = Date.now();
     console.log('[TestDinoReporter] Test run started');
   }
@@ -169,7 +170,7 @@ export class TestDinoReporter implements Reporter {
         throw new Error(`Upload failed: ${response.status} - ${error}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as { url?: string };
       console.log(`[TestDinoReporter] ✓ Results uploaded successfully`);
       console.log(`  View results: ${data.url || 'https://testdino.com/results/' + this.runId}`);
     } catch (error) {
@@ -180,9 +181,9 @@ export class TestDinoReporter implements Reporter {
   }
 
   private getTestId(test: TestCase): string {
-    const path = test.location.file;
+    const filePath = test.location.file;
     const title = test.titlePath().join(' › ');
-    const hash = require('crypto').createHash('md5').update(`${path}::${title}`).digest('hex');
+    const hash = crypto.createHash('md5').update(`${filePath}::${title}`).digest('hex');
     return hash;
   }
 }
@@ -199,7 +200,6 @@ export async function uploadToTestDino(resultsPath: string, config?: TestDinoCon
   }
 
   const resultsData = fs.readFileSync(resultsPath, 'utf-8');
-  const results = JSON.parse(resultsData);
 
   const endpoint = testDinoConfig.uploadEndpoint || 'https://api.testdino.com/v1/results';
 
@@ -220,9 +220,9 @@ export async function uploadToTestDino(resultsPath: string, config?: TestDinoCon
     throw new Error(`Upload failed: ${response.status} - ${error}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { url?: string };
   console.log('✓ Upload successful');
-  console.log(`View results: ${data.url}`);
+  console.log(`View results: ${data.url || 'https://testdino.com'}`);
 
   return data;
 }

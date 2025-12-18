@@ -296,7 +296,7 @@ export class AggregationAgent {
     const configPath = path.join(process.cwd(), 'playwright.config.ts');
 
     try {
-      let configContent = await fs.readFile(configPath, 'utf-8');
+      const configContent = await fs.readFile(configPath, 'utf-8');
 
       // Check if reporter is already configured
       if (configContent.includes('DatabaseReporter') ||

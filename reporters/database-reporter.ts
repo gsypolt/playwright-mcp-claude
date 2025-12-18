@@ -11,29 +11,30 @@ import { createPool, Pool as MySQLPool, PoolOptions } from 'mysql2/promise';
 import { getAggregationConfig, DatabaseConfig } from '../config/aggregation.config';
 import * as crypto from 'crypto';
 
-interface TestCaseData {
-  testId: string;
-  title: string;
-  filePath: string;
-  projectName: string;
-  browser: string;
-  testType: string;
-  tags: string;
-}
+// Unused interfaces kept for future reference
+// interface _TestCaseData {
+//   testId: string;
+//   title: string;
+//   filePath: string;
+//   projectName: string;
+//   browser: string;
+//   testType: string;
+//   tags: string;
+// }
 
-interface TestResultData {
-  runId: string;
-  testCaseId: number;
-  status: string;
-  durationMs: number;
-  retryCount: number;
-  errorMessage?: string;
-  errorStack?: string;
-  stdout?: string;
-  stderr?: string;
-  startedAt: Date;
-  finishedAt: Date;
-}
+// interface _TestResultData {
+//   runId: string;
+//   testCaseId: number;
+//   status: string;
+//   durationMs: number;
+//   retryCount: number;
+//   errorMessage?: string;
+//   errorStack?: string;
+//   stdout?: string;
+//   stderr?: string;
+//   startedAt: Date;
+//   finishedAt: Date;
+// }
 
 export class DatabaseReporter implements Reporter {
   private pool: Pool | MySQLPool | null = null;
@@ -42,7 +43,7 @@ export class DatabaseReporter implements Reporter {
   private dbType: 'postgresql' | 'mysql';
   private startTime: Date;
   private testCases: Map<string, number> = new Map();
-  private fullConfig: FullConfig | null = null;
+  private _fullConfig: FullConfig | null = null;
 
   constructor() {
     const aggregationConfig = getAggregationConfig();
@@ -62,7 +63,7 @@ export class DatabaseReporter implements Reporter {
   }
 
   async onBegin(config: FullConfig, suite: Suite) {
-    this.fullConfig = config;
+    this._fullConfig = config;
     await this.initializeDatabase();
     await this.createTestRun(suite);
   }

@@ -1,6 +1,6 @@
 import { APIRequestContext, expect } from '@playwright/test';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   status: number;
   body: T;
   headers: Record<string, string>;
@@ -15,7 +15,7 @@ export class ApiHelper {
   /**
    * Performs a GET request
    */
-  async get<T = any>(url: string, options?: any): Promise<ApiResponse<T>> {
+  async get<T = unknown>(url: string, options?: Record<string, unknown>): Promise<ApiResponse<T>> {
     const response = await this.request.get(url, options);
     return {
       status: response.status(),
@@ -27,7 +27,7 @@ export class ApiHelper {
   /**
    * Performs a POST request
    */
-  async post<T = any>(url: string, data?: any, options?: any): Promise<ApiResponse<T>> {
+  async post<T = unknown>(url: string, data?: unknown, options?: Record<string, unknown>): Promise<ApiResponse<T>> {
     const response = await this.request.post(url, {
       data,
       ...options,
@@ -100,7 +100,7 @@ export class ApiHelper {
   /**
    * Validates response schema matches expected structure
    */
-  assertSchema(response: ApiResponse, schema: Record<string, string>) {
+  assertSchema(response: ApiResponse<Record<string, unknown>>, schema: Record<string, string>) {
     Object.entries(schema).forEach(([key, type]) => {
       expect(typeof response.body[key]).toBe(type);
     });
@@ -112,7 +112,7 @@ export class ApiHelper {
  */
 export async function createAuthenticatedApiHelper(
   request: APIRequestContext,
-  token: string
+  _token: string
 ): Promise<ApiHelper> {
   // Set default authorization header
   await request.dispose();

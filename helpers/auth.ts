@@ -25,7 +25,7 @@ export async function genericLogin(
   await page.click(selectors.submit);
 
   // Wait for navigation or success indicator
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('load');
 }
 
 /**
@@ -54,7 +54,7 @@ export async function googleLogin(
     await page.click('#passwordNext, button:has-text("Next")');
 
     // Wait for authentication to complete
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   }
 }
 
@@ -79,7 +79,7 @@ export async function loginWithGoogle(
 
   // Wait for popup to close and authentication to complete
   await popup.waitForEvent('close');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('load');
 }
 
 /**
@@ -115,7 +115,7 @@ export async function microsoftLogin(
       // Prompt may not appear
     }
 
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   }
 }
 
@@ -140,7 +140,7 @@ export async function loginWithMicrosoft(
 
   // Wait for popup to close and authentication to complete
   await popup.waitForEvent('close');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('load');
 }
 
 /**

@@ -17,7 +17,7 @@ export class BasePage {
    * Wait for page to be ready
    */
   async waitForReady() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('load');
   }
 
   /**
@@ -30,8 +30,11 @@ export class BasePage {
   /**
    * Get element by role
    */
-  getByRole(role: string, options?: { name?: string | RegExp }): Locator {
-    return this.page.getByRole(role as any, options);
+  getByRole(
+    role: 'alert' | 'alertdialog' | 'button' | 'checkbox' | 'dialog' | 'gridcell' | 'heading' | 'img' | 'link' | 'listitem' | 'menuitem' | 'option' | 'radio' | 'row' | 'tab' | 'textbox',
+    options?: { name?: string | RegExp }
+  ): Locator {
+    return this.page.getByRole(role, options);
   }
 
   /**
@@ -111,14 +114,14 @@ export class BasePage {
    * Wait for element to be visible
    */
   async waitForVisible(selector: string) {
-    await this.page.waitForSelector(selector, { state: 'visible' });
+    await this.page.locator(selector).waitFor({ state: 'visible' });
   }
 
   /**
    * Wait for element to be hidden
    */
   async waitForHidden(selector: string) {
-    await this.page.waitForSelector(selector, { state: 'hidden' });
+    await this.page.locator(selector).waitFor({ state: 'hidden' });
   }
 
   /**

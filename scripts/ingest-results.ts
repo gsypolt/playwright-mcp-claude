@@ -9,14 +9,13 @@
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 import { Pool } from 'pg';
 import { createPool, Pool as MySQLPool } from 'mysql2/promise';
 import { getAggregationConfig } from '../config/aggregation.config';
 import * as crypto from 'crypto';
 
 interface PlaywrightJsonReport {
-  config: any;
+  config: Record<string, unknown>;
   suites: Suite[];
   stats: {
     startTime: string;
@@ -50,7 +49,7 @@ interface Spec {
 
 interface Test {
   timeout: number;
-  annotations: any[];
+  annotations: unknown[];
   expectedStatus: string;
   projectName: string;
   projectId: string;
@@ -66,12 +65,12 @@ interface TestResult {
     message: string;
     stack: string;
   };
-  errors: any[];
-  stdout: any[];
-  stderr: any[];
+  errors: unknown[];
+  stdout: unknown[];
+  stderr: unknown[];
   retry: number;
   startTime: string;
-  attachments: any[];
+  attachments: unknown[];
 }
 
 class ResultsIngester {
@@ -182,8 +181,6 @@ class ResultsIngester {
   }
 
   private async processSpec(spec: Spec, suite: Suite) {
-    const testId = this.getTestId(spec.file, spec.title);
-
     // Insert test case
     const testCaseId = await this.insertTestCase(spec, suite);
 
@@ -195,7 +192,7 @@ class ResultsIngester {
     }
   }
 
-  private async insertTestCase(spec: Spec, suite: Suite): Promise<number> {
+  private async insertTestCase(spec: Spec, _suite: Suite): Promise<number> {
     const testId = this.getTestId(spec.file, spec.title);
     const testType = this.inferTestType(spec.file);
 
@@ -222,7 +219,7 @@ class ResultsIngester {
     return this.dbType === 'postgresql' ? result.rows[0].id : result[0].insertId;
   }
 
-  private async insertTestResult(testCaseId: number, test: Test, result: TestResult) {
+  private async insertTestResult(testCaseId: number, _test: Test, result: TestResult) {
     const query = `
       INSERT INTO test_results (
         run_id, test_case_id, status, duration_ms, retry_count,
@@ -241,8 +238,8 @@ class ResultsIngester {
       result.retry,
       result.error?.message || null,
       result.error?.stack || null,
-      result.stdout?.map(s => s.toString()).join('\n') || null,
-      result.stderr?.map(s => s.toString()).join('\n') || null,
+      result.stdout?.map(s => String(s)).join('\n') || null,
+      result.stderr?.map(s => String(s)).join('\n') || null,
       startedAt,
       finishedAt,
     ];

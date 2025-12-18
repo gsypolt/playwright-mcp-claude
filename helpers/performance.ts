@@ -80,7 +80,7 @@ export async function measureApiResponseTime(
 ): Promise<number> {
   const startTime = Date.now();
 
-  const response = await page.waitForResponse(urlPattern);
+  await page.waitForResponse(urlPattern);
   const endTime = Date.now();
 
   return endTime - startTime;

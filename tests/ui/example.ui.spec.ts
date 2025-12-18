@@ -77,8 +77,7 @@ test.describe('Example UI Tests', () => {
     await basePage.waitForReady();
 
     // Check if element is visible
-    const isVisible = await basePage.isVisible('[data-testid="product-list"]');
-    expect(isVisible).toBe(true);
+    await expect(page.locator('[data-testid="product-list"]')).toBeVisible();
 
     // Click on first product
     await basePage.getByTestId('product-1').click();

@@ -82,7 +82,7 @@ export class FormComponent {
   /**
    * Fill entire form with data
    */
-  async fillForm(data: Record<string, any>) {
+  async fillForm(data: Record<string, unknown>) {
     for (const [key, value] of Object.entries(data)) {
       const input = this.page.locator(`[name="${key}"]`);
       const inputType = await input.getAttribute('type');
@@ -94,9 +94,9 @@ export class FormComponent {
           await input.uncheck();
         }
       } else if (inputType === 'radio') {
-        await this.page.locator(`[name="${key}"][value="${value}"]`).click();
+        await this.page.locator(`[name="${key}"][value="${String(value)}"]`).click();
       } else if (inputType === 'file') {
-        await input.setInputFiles(value);
+        await input.setInputFiles(value as string | string[]);
       } else {
         await input.fill(String(value));
       }
@@ -123,20 +123,31 @@ export class FormComponent {
    * Clear all form fields
    */
   async clearForm() {
-    await this.getForm().evaluate((form: HTMLFormElement) => {
-      form.reset();
+    await this.getForm().evaluate((form) => {
+      if ('reset' in form && typeof form.reset === 'function') {
+        (form.reset as () => void)();
+      }
     });
   }
 
   /**
    * Get form data
    */
-  async getFormData(): Promise<Record<string, any>> {
-    return await this.getForm().evaluate((form: HTMLFormElement) => {
-      const formData = new FormData(form);
-      const data: Record<string, any> = {};
-      formData.forEach((value, key) => {
-        data[key] = value;
+  async getFormData(): Promise<Record<string, unknown>> {
+    return await this.getForm().evaluate((form) => {
+      const data: Record<string, unknown> = {};
+      const inputs = form.querySelectorAll('input, select, textarea');
+      inputs.forEach((input: unknown) => {
+        const el = input as { name?: string; value?: string; checked?: boolean; type?: string };
+        if (el.name) {
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            if (el.checked) {
+              data[el.name] = el.value;
+            }
+          } else {
+            data[el.name] = el.value;
+          }
+        }
       });
       return data;
     });
