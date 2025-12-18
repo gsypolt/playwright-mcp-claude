@@ -17,6 +17,7 @@ npm run setup:aggregation
 ```
 
 The agent provides:
+
 - ✅ Guided setup for all aggregation methods
 - ✅ Automatic environment configuration
 - ✅ Docker setup assistance
@@ -32,10 +33,12 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 ### 1. Database Infrastructure ✅
 
 **Files Created:**
+
 - [database/schema.sql](database/schema.sql) - Complete PostgreSQL/MySQL schema
 - [docker-compose.yml](docker-compose.yml) - Full stack deployment
 
 **Database Tables:**
+
 - `test_runs` - Test suite executions with CI/CD metadata
 - `test_cases` - Unique test definitions
 - `test_results` - Individual test execution results
@@ -44,6 +47,7 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 - `flaky_tests` - Automatic flakiness detection and tracking
 
 **Views & Functions:**
+
 - `test_pass_rate_daily` - Daily pass/fail trends
 - `slowest_tests` - Performance bottleneck identification
 - `most_flaky_tests` - Flakiness ranking
@@ -53,6 +57,7 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 ### 2. Custom Reporters ✅
 
 **DatabaseReporter** ([reporters/database-reporter.ts](reporters/database-reporter.ts)):
+
 - Real-time test result ingestion
 - Supports PostgreSQL and MySQL
 - Automatic test case deduplication
@@ -61,6 +66,7 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 - CI/CD metadata extraction
 
 **TestDinoReporter** ([reporters/testdino-reporter.ts](reporters/testdino-reporter.ts)):
+
 - Integration with TestDino platform
 - Automatic result upload
 - Failure analysis support
@@ -70,6 +76,7 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 ### 3. Configuration System ✅
 
 **Aggregation Config** ([config/aggregation.config.ts](config/aggregation.config.ts)):
+
 - Unified configuration interface
 - Environment-based method selection
 - Database connection settings
@@ -77,6 +84,7 @@ See [Quick Start Guide](docs/AGGREGATION_QUICKSTART.md)
 - JSON export options
 
 **Environment Variables** ([.env.example](.env.example)):
+
 ```env
 AGGREGATION_METHOD=database|testdino|json|none
 DB_TYPE=postgresql|mysql
@@ -88,12 +96,14 @@ TESTDINO_API_KEY=your-key
 ### 4. Data Ingestion ✅
 
 **Ingestion Script** ([scripts/ingest-results.ts](scripts/ingest-results.ts)):
+
 - Parse Playwright JSON reports
 - Batch insert into database
 - CI/CD integration friendly
 - Support for historical data import
 
 **CLI Commands:**
+
 ```bash
 npm run ingest test-results/results.json
 npx ts-node scripts/ingest-results.ts <json-path>
@@ -104,6 +114,7 @@ npx ts-node scripts/ingest-results.ts <json-path>
 **Dashboard** ([grafana/dashboards/test-results-dashboard.json](grafana/dashboards/test-results-dashboard.json)):
 
 **13 Pre-configured Panels:**
+
 1. Test Pass Rate (Last 30 Days) - Line graph
 2. Total Tests Executed - Stat
 3. Current Pass Rate - Stat with thresholds
@@ -119,6 +130,7 @@ npx ts-node scripts/ingest-results.ts <json-path>
 13. Performance Metrics Trends - Line graph
 
 **Datasource Config** ([grafana/datasource.yml](grafana/datasource.yml)):
+
 - PostgreSQL connection
 - Environment variable support
 - Auto-provisioning ready
@@ -128,12 +140,14 @@ npx ts-node scripts/ingest-results.ts <json-path>
 **Workflow** ([.github/workflows/test-with-aggregation.yml](.github/workflows/test-with-aggregation.yml)):
 
 **Four Jobs:**
+
 1. **test-with-database** - Direct database insertion
 2. **test-with-json** - JSON export + ingestion
 3. **test-with-testdino** - TestDino upload
 4. **analyze-results** - Post-test analysis and PR comments
 
 **Features:**
+
 - PostgreSQL service container
 - Database initialization
 - Multi-method testing
@@ -144,11 +158,13 @@ npx ts-node scripts/ingest-results.ts <json-path>
 ### 7. Documentation ✅
 
 **Comprehensive Guides:**
+
 - [docs/TEST_RESULTS_AGGREGATION.md](docs/TEST_RESULTS_AGGREGATION.md) - Full documentation (100+ sections)
 - [docs/AGGREGATION_QUICKSTART.md](docs/AGGREGATION_QUICKSTART.md) - 5-minute quick start
 - [AGGREGATION_SUMMARY.md](AGGREGATION_SUMMARY.md) - This file
 
 **Topics Covered:**
+
 - Setup instructions for all methods
 - Docker deployment
 - Manual installation
@@ -163,6 +179,7 @@ npx ts-node scripts/ingest-results.ts <json-path>
 ### 8. Interactive Setup Agent ✅
 
 **Aggregation Setup Agent** ([prompts/aggregation-agent.ts](prompts/aggregation-agent.ts)):
+
 - Interactive CLI for guided configuration
 - Supports all three aggregation methods
 - Automatic environment file updates
@@ -172,11 +189,13 @@ npx ts-node scripts/ingest-results.ts <json-path>
 - Real-time validation and error handling
 
 **Run with:**
+
 ```bash
 npm run setup:aggregation
 ```
 
 **Features:**
+
 - Method selection (Database, TestDino, JSON)
 - Database type selection (PostgreSQL/MySQL)
 - Docker vs manual setup choice
@@ -187,6 +206,7 @@ npm run setup:aggregation
 ### 9. NPM Scripts ✅
 
 **New Commands Added:**
+
 ```json
 {
   "setup:aggregation": "Run interactive setup agent",
@@ -276,56 +296,65 @@ npm run setup:aggregation
 
 ## Features Comparison
 
-| Feature | Database + Grafana | TestDino | JSON Export |
-|---------|-------------------|----------|-------------|
-| **Setup Time** | 10-30 min | 5 min | 5 min |
-| **Infrastructure** | Self-hosted | Managed | Minimal |
-| **Cost** | Free | Paid tiers | Free |
-| **Historical Data** | Unlimited | Plan-based | Unlimited |
-| **Custom Dashboards** | Yes (unlimited) | Limited | External |
-| **AI Insights** | No | Yes | No |
-| **Flaky Detection** | Automatic | AI-powered | Manual |
-| **Real-time** | Yes | Yes | No |
-| **Offline** | Yes | No | Yes |
-| **Team Features** | Manual | Built-in | Manual |
+| Feature               | Database + Grafana | TestDino   | JSON Export |
+| --------------------- | ------------------ | ---------- | ----------- |
+| **Setup Time**        | 10-30 min          | 5 min      | 5 min       |
+| **Infrastructure**    | Self-hosted        | Managed    | Minimal     |
+| **Cost**              | Free               | Paid tiers | Free        |
+| **Historical Data**   | Unlimited          | Plan-based | Unlimited   |
+| **Custom Dashboards** | Yes (unlimited)    | Limited    | External    |
+| **AI Insights**       | No                 | Yes        | No          |
+| **Flaky Detection**   | Automatic          | AI-powered | Manual      |
+| **Real-time**         | Yes                | Yes        | No          |
+| **Offline**           | Yes                | No         | Yes         |
+| **Team Features**     | Manual             | Built-in   | Manual      |
 
 ## Use Cases
 
 ### 1. Startup / Small Team
+
 **Recommended:** TestDino
+
 - Zero infrastructure
 - Quick setup
 - AI insights
 - Team collaboration
 
 ### 2. Enterprise / Large Team
+
 **Recommended:** Database + Grafana
+
 - Complete control
 - Unlimited data
 - Custom dashboards
 - Integration with existing tools
 
 ### 3. CI/CD Pipeline
+
 **Recommended:** JSON Export
+
 - Maximum flexibility
 - No runtime dependencies
 - Easy integration
 - Portable results
 
 ### 4. Hybrid Approach
+
 **Recommended:** All Three!
+
 ```typescript
 reporter: [
   ['html'],
   ['json', { outputFile: 'results.json' }],
   [DatabaseReporter],
   [TestDinoReporter],
-]
+];
 ```
 
 ## Key Metrics Tracked
 
 ### 1. Test Execution
+
 - Total tests run
 - Pass/fail counts
 - Execution duration
@@ -333,12 +362,14 @@ reporter: [
 - Skip counts
 
 ### 2. Test Stability
+
 - Pass rate trends
 - Flakiness percentage
 - Failure patterns
 - Test volatility
 
 ### 3. Performance
+
 - Test duration
 - Page load time
 - API response time
@@ -346,6 +377,7 @@ reporter: [
 - Resource sizes
 
 ### 4. CI/CD Context
+
 - Branch name
 - Commit SHA
 - Build ID
@@ -353,6 +385,7 @@ reporter: [
 - Timestamp
 
 ### 5. Test Metadata
+
 - Test type (API, UI, performance)
 - Browser/device
 - File path
@@ -362,6 +395,7 @@ reporter: [
 ## Quick Start Commands
 
 ### Docker Setup (Fastest)
+
 ```bash
 # 1. Start everything
 npm run db:start
@@ -377,6 +411,7 @@ npm run grafana:open
 ```
 
 ### TestDino Setup
+
 ```bash
 # 1. Get credentials from https://testdino.com
 export TESTDINO_API_KEY=your-key
@@ -390,6 +425,7 @@ npm test
 ```
 
 ### JSON Export (Default)
+
 ```bash
 # Just run tests - JSON is exported automatically
 npm test
@@ -401,11 +437,13 @@ npm run ingest test-results/results.json
 ## Database Queries
 
 ### Flaky Tests
+
 ```sql
 SELECT * FROM most_flaky_tests WHERE flake_rate > 10;
 ```
 
 ### Pass Rate Trend
+
 ```sql
 SELECT test_date, pass_rate FROM test_pass_rate_daily
 WHERE test_date >= CURRENT_DATE - INTERVAL '30 days'
@@ -413,11 +451,13 @@ ORDER BY test_date DESC;
 ```
 
 ### Slowest Tests
+
 ```sql
 SELECT title, file_path, avg_duration_ms FROM slowest_tests LIMIT 10;
 ```
 
 ### Test Failures by Browser
+
 ```sql
 SELECT
   tc.browser,
@@ -430,6 +470,7 @@ GROUP BY tc.browser;
 ```
 
 ### Performance Regression
+
 ```sql
 SELECT
   tc.title,

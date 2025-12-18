@@ -33,11 +33,5 @@
     "playwright/no-focused-test": "error",
     "playwright/no-skipped-test": "warn"
   },
-  "ignorePatterns": [
-    "node_modules/",
-    "dist/",
-    "playwright-report/",
-    "test-results/",
-    "*.config.js"
-  ]
+  "ignorePatterns": ["node_modules/", "dist/", "playwright-report/", "test-results/", "*.config.js"]
 }

@@ -31,7 +31,23 @@ export class BasePage {
    * Get element by role
    */
   getByRole(
-    role: 'alert' | 'alertdialog' | 'button' | 'checkbox' | 'dialog' | 'gridcell' | 'heading' | 'img' | 'link' | 'listitem' | 'menuitem' | 'option' | 'radio' | 'row' | 'tab' | 'textbox',
+    role:
+      | 'alert'
+      | 'alertdialog'
+      | 'button'
+      | 'checkbox'
+      | 'dialog'
+      | 'gridcell'
+      | 'heading'
+      | 'img'
+      | 'link'
+      | 'listitem'
+      | 'menuitem'
+      | 'option'
+      | 'radio'
+      | 'row'
+      | 'tab'
+      | 'textbox',
     options?: { name?: string | RegExp }
   ): Locator {
     return this.page.getByRole(role, options);
@@ -62,10 +78,7 @@ export class BasePage {
    * Click and wait for navigation
    */
   async clickAndWaitForNavigation(selector: string) {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(selector),
-    ]);
+    await Promise.all([this.page.waitForNavigation(), this.page.click(selector)]);
   }
 
   /**

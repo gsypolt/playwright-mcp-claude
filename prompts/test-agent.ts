@@ -125,8 +125,8 @@ export class TestAgent {
   }
 
   private async prompt(question: string): Promise<string> {
-    return new Promise((resolve) => {
-      this.rl.question(question, (answer) => {
+    return new Promise(resolve => {
+      this.rl.question(question, answer => {
         resolve(answer.trim());
       });
     });

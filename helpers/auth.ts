@@ -34,10 +34,7 @@ export async function genericLogin(
  * @param page - Playwright page object
  * @param credentials - Google email and password
  */
-export async function googleLogin(
-  page: Page,
-  credentials: LoginCredentials
-) {
+export async function googleLogin(page: Page, credentials: LoginCredentials) {
   // Handle Google Sign-In popup or redirect
   const isPopup = page.url().includes('accounts.google.com');
 
@@ -88,12 +85,9 @@ export async function loginWithGoogle(
  * @param page - Playwright page object
  * @param credentials - Microsoft email and password
  */
-export async function microsoftLogin(
-  page: Page,
-  credentials: LoginCredentials
-) {
-  const isMicrosoftPage = page.url().includes('login.microsoftonline.com') ||
-                          page.url().includes('login.live.com');
+export async function microsoftLogin(page: Page, credentials: LoginCredentials) {
+  const isMicrosoftPage =
+    page.url().includes('login.microsoftonline.com') || page.url().includes('login.live.com');
 
   if (isMicrosoftPage) {
     // Fill email

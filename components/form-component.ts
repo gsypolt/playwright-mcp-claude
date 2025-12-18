@@ -107,7 +107,9 @@ export class FormComponent {
    * Get form validation errors
    */
   async getValidationErrors(): Promise<string[]> {
-    const errors = await this.page.locator('.error, .invalid-feedback, [role="alert"]').allTextContents();
+    const errors = await this.page
+      .locator('.error, .invalid-feedback, [role="alert"]')
+      .allTextContents();
     return errors.filter(Boolean);
   }
 
@@ -123,7 +125,7 @@ export class FormComponent {
    * Clear all form fields
    */
   async clearForm() {
-    await this.getForm().evaluate((form) => {
+    await this.getForm().evaluate(form => {
       if ('reset' in form && typeof form.reset === 'function') {
         (form.reset as () => void)();
       }
@@ -134,7 +136,7 @@ export class FormComponent {
    * Get form data
    */
   async getFormData(): Promise<Record<string, unknown>> {
-    return await this.getForm().evaluate((form) => {
+    return await this.getForm().evaluate(form => {
       const data: Record<string, unknown> = {};
       const inputs = form.querySelectorAll('input, select, textarea');
       inputs.forEach((input: unknown) => {

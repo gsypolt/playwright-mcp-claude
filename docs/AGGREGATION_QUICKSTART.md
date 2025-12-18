@@ -11,6 +11,7 @@ npm run setup:aggregation
 ```
 
 The agent will:
+
 - Ask which method you prefer (Database, TestDino, or JSON)
 - Guide you through configuration
 - Update your .env file automatically
@@ -33,16 +34,19 @@ cp .env.example .env
 ```
 
 Edit `.env`:
+
 ```env
 AGGREGATION_METHOD=database
 ```
 
 **Run tests:**
+
 ```bash
 npm test
 ```
 
 **View dashboard:**
+
 ```bash
 npm run grafana:open
 ```
@@ -66,6 +70,7 @@ TESTDINO_PROJECT_ID=your-project-id
 ```
 
 **Run tests:**
+
 ```bash
 npm test
 ```
@@ -79,6 +84,7 @@ Results automatically upload to TestDino.
 **No configuration needed!**
 
 Just run:
+
 ```bash
 npm test
 ```
@@ -86,6 +92,7 @@ npm test
 Results are saved to `test-results/results.json`
 
 **Ingest into database later:**
+
 ```bash
 npm run ingest test-results/results.json
 ```
@@ -108,6 +115,7 @@ docker-compose logs -f
 ```
 
 Services:
+
 - PostgreSQL: localhost:5432
 - Grafana: http://localhost:3000
 - PgAdmin: http://localhost:5050 (with `--profile tools`)
@@ -187,7 +195,7 @@ reporter: [
   ['json', { outputFile: 'test-results/results.json' }],
   [DatabaseReporter],
   [TestDinoReporter],
-]
+];
 ```
 
 ---

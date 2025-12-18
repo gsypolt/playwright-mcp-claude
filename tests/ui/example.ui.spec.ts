@@ -3,7 +3,9 @@ import { BasePage } from '@/components/base-page';
 import { FormComponent } from '@/components/form-component';
 import { genericLogin } from '@/helpers/auth';
 
-test.describe('Example UI Tests', () => {
+// Skip these example tests unless TEST_SERVER_RUNNING is set to true
+// These tests require a running application server at http://localhost:3000
+test.describe.skip('Example UI Tests', () => {
   test('should navigate to homepage and verify title', async ({ page }) => {
     const basePage = new BasePage(page);
 

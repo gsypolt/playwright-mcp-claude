@@ -42,8 +42,8 @@ export class AggregationAgent {
   }
 
   private async prompt(question: string): Promise<string> {
-    return new Promise((resolve) => {
-      this.rl.question(question, (answer) => {
+    return new Promise(resolve => {
+      this.rl.question(question, answer => {
         resolve(answer.trim());
       });
     });
@@ -165,13 +165,14 @@ export class AggregationAgent {
     const dbType = await this.prompt('Database type [postgresql/mysql]: ');
     this.config.dbType = (dbType || 'postgresql') as 'postgresql' | 'mysql';
 
-    this.config.dbHost = await this.prompt('Database host [localhost]: ') || 'localhost';
+    this.config.dbHost = (await this.prompt('Database host [localhost]: ')) || 'localhost';
 
     const defaultPort = this.config.dbType === 'postgresql' ? '5432' : '3306';
-    this.config.dbPort = await this.prompt(`Database port [${defaultPort}]: `) || defaultPort;
+    this.config.dbPort = (await this.prompt(`Database port [${defaultPort}]: `)) || defaultPort;
 
-    this.config.dbName = await this.prompt('Database name [playwright_results]: ') || 'playwright_results';
-    this.config.dbUser = await this.prompt('Database user [postgres]: ') || 'postgres';
+    this.config.dbName =
+      (await this.prompt('Database name [playwright_results]: ')) || 'playwright_results';
+    this.config.dbUser = (await this.prompt('Database user [postgres]: ')) || 'postgres';
     this.config.dbPassword = await this.prompt('Database password: ');
 
     console.log('\n📝 Manual setup steps:');
@@ -279,13 +280,22 @@ export class AggregationAgent {
 
     // Update TestDino config if applicable
     if (this.config.method === 'testdino') {
-      envContent = envContent.replace(/TESTDINO_API_KEY=.*/, `TESTDINO_API_KEY=${this.config.testdinoApiKey}`);
-      envContent = envContent.replace(/TESTDINO_PROJECT_ID=.*/, `TESTDINO_PROJECT_ID=${this.config.testdinoProjectId}`);
+      envContent = envContent.replace(
+        /TESTDINO_API_KEY=.*/,
+        `TESTDINO_API_KEY=${this.config.testdinoApiKey}`
+      );
+      envContent = envContent.replace(
+        /TESTDINO_PROJECT_ID=.*/,
+        `TESTDINO_PROJECT_ID=${this.config.testdinoProjectId}`
+      );
     }
 
     // Update JSON config if applicable
     if (this.config.method === 'json') {
-      envContent = envContent.replace(/JSON_OUTPUT_PATH=.*/, `JSON_OUTPUT_PATH=${this.config.jsonOutputPath}`);
+      envContent = envContent.replace(
+        /JSON_OUTPUT_PATH=.*/,
+        `JSON_OUTPUT_PATH=${this.config.jsonOutputPath}`
+      );
     }
 
     await fs.writeFile(envPath, envContent);
@@ -299,8 +309,10 @@ export class AggregationAgent {
       const configContent = await fs.readFile(configPath, 'utf-8');
 
       // Check if reporter is already configured
-      if (configContent.includes('DatabaseReporter') ||
-          configContent.includes('TestDinoReporter')) {
+      if (
+        configContent.includes('DatabaseReporter') ||
+        configContent.includes('TestDinoReporter')
+      ) {
         console.log('✓ Playwright config already has custom reporters');
         return;
       }
@@ -454,7 +466,6 @@ export class AggregationAgent {
 
       // Show next steps
       await this.showNextSteps();
-
     } catch (error: any) {
       console.error('\n✗ Setup failed:', error.message);
       console.log('\nFor help, see: docs/AGGREGATION_QUICKSTART.md');

@@ -20,6 +20,10 @@ jobs:
   agent-tests:
     name: Agent Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -103,26 +107,50 @@ jobs:
 
       - name: Verify test-agent starts
         run: |
-          timeout 5s npx ts-node prompts/test-agent.ts > /tmp/test-agent-output.txt 2>&1 || EXIT_CODE=$?
-          if [ "$EXIT_CODE" = "124" ]; then
-            echo "✓ Test agent started successfully (timed out as expected)"
-            cat /tmp/test-agent-output.txt | grep -q "Playwright Test Generator" && echo "✓ Menu displayed correctly"
-            exit 0
+          # Run the agent with timeout and capture output
+          timeout 3s npx ts-node prompts/test-agent.ts < /dev/null > /tmp/test-agent-output.txt 2>&1 || EXIT_CODE=$?
+
+          # Exit code 124 means timeout (expected), anything else is an error
+          if [ "${EXIT_CODE:-0}" = "124" ] || [ "${EXIT_CODE:-0}" = "0" ]; then
+            echo "✓ Test agent started successfully"
+
+            # Verify the menu was displayed
+            if grep -q "Playwright Test Generator" /tmp/test-agent-output.txt; then
+              echo "✓ Menu displayed correctly"
+              cat /tmp/test-agent-output.txt
+              exit 0
+            else
+              echo "✗ Menu not found in output"
+              cat /tmp/test-agent-output.txt
+              exit 1
+            fi
           else
-            echo "✗ Test agent failed to start"
+            echo "✗ Test agent failed to start (exit code: ${EXIT_CODE})"
             cat /tmp/test-agent-output.txt
             exit 1
           fi
 
       - name: Verify aggregation-agent starts
         run: |
-          timeout 5s npx ts-node prompts/aggregation-agent.ts > /tmp/aggregation-agent-output.txt 2>&1 || EXIT_CODE=$?
-          if [ "$EXIT_CODE" = "124" ]; then
-            echo "✓ Aggregation agent started successfully (timed out as expected)"
-            cat /tmp/aggregation-agent-output.txt | grep -q "Test Results Aggregation" && echo "✓ Menu displayed correctly"
-            exit 0
+          # Run the agent with timeout and capture output
+          timeout 3s npx ts-node prompts/aggregation-agent.ts < /dev/null > /tmp/aggregation-agent-output.txt 2>&1 || EXIT_CODE=$?
+
+          # Exit code 124 means timeout (expected), anything else is an error
+          if [ "${EXIT_CODE:-0}" = "124" ] || [ "${EXIT_CODE:-0}" = "0" ]; then
+            echo "✓ Aggregation agent started successfully"
+
+            # Verify the menu was displayed
+            if grep -q "Test Results Aggregation" /tmp/aggregation-agent-output.txt; then
+              echo "✓ Menu displayed correctly"
+              cat /tmp/aggregation-agent-output.txt
+              exit 0
+            else
+              echo "✗ Menu not found in output"
+              cat /tmp/aggregation-agent-output.txt
+              exit 1
+            fi
           else
-            echo "✗ Aggregation agent failed to start"
+            echo "✗ Aggregation agent failed to start (exit code: ${EXIT_CODE})"
             cat /tmp/aggregation-agent-output.txt
             exit 1
           fi

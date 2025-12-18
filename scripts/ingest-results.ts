@@ -248,9 +248,7 @@ class ResultsIngester {
   }
 
   private async updateTestRunStats(report: PlaywrightJsonReport) {
-    const endTime = new Date(
-      new Date(report.stats.startTime).getTime() + report.stats.duration
-    );
+    const endTime = new Date(new Date(report.stats.startTime).getTime() + report.stats.duration);
 
     const query = `
       UPDATE test_runs
