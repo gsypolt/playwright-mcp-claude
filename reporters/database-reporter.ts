@@ -204,7 +204,7 @@ export class DatabaseReporter implements Reporter {
       result.stdout?.map(s => s.toString()).join('\n') || null,
       result.stderr?.map(s => s.toString()).join('\n') || null,
       new Date(result.startTime),
-      new Date(result.startTime + result.duration),
+      new Date(new Date(result.startTime).getTime() + result.duration),
     ];
 
     const insertResult = await this.executeQuery(query, values);

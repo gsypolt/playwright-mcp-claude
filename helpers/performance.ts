@@ -14,22 +14,28 @@ export interface PerformanceMetrics {
  * Measures page load performance metrics
  */
 export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
-  const performanceTiming = JSON.parse(
-    await page.evaluate(() => JSON.stringify(window.performance.timing))
-  );
+  const performanceTiming = await page.evaluate(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = globalThis as any;
+    return JSON.parse(JSON.stringify(win.performance.timing));
+  });
 
-  const navigation = performanceTiming;
+  const navigation = performanceTiming as Record<string, number>;
   const loadTime = navigation.loadEventEnd - navigation.navigationStart;
   const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.navigationStart;
 
   // Get Web Vitals if available
   const webVitals = await page.evaluate(() => {
-    return new Promise(resolve => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new Promise((resolve: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const metrics: any = {};
 
-      if ('PerformanceObserver' in window) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (typeof PerformanceObserver !== 'undefined') {
         // Observe paint entries
-        const paintObserver = new PerformanceObserver(list => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const paintObserver = new (PerformanceObserver as any)((list: any) => {
           for (const entry of list.getEntries()) {
             if (entry.name === 'first-contentful-paint') {
               metrics.firstContentfulPaint = entry.startTime;
@@ -39,10 +45,13 @@ export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
         paintObserver.observe({ entryTypes: ['paint'] });
 
         // LCP
-        const lcpObserver = new PerformanceObserver(list => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lcpObserver = new (PerformanceObserver as any)((list: any) => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
-          metrics.largestContentfulPaint = lastEntry.startTime;
+          if (lastEntry) {
+            metrics.largestContentfulPaint = lastEntry.startTime;
+          }
         });
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
@@ -56,7 +65,7 @@ export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
   return {
     loadTime,
     domContentLoaded,
-    ...webVitals,
+    ...(typeof webVitals === 'object' && webVitals !== null ? webVitals : {}),
   };
 }
 
@@ -120,8 +129,10 @@ export async function measureResourceSizes(page: Page): Promise<{
   byType: Record<string, number>;
 }> {
   const resources = await page.evaluate(() => {
-    const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-    return entries.map(entry => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const entries = performance.getEntriesByType('resource') as any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return entries.map((entry: any) => ({
       name: entry.name,
       size: entry.transferSize || 0,
       type: entry.initiatorType,
