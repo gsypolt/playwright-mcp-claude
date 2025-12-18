@@ -56,7 +56,9 @@ export class ModalComponent {
    */
   async clickPrimary() {
     await this.getModal()
-      .locator('button[type="submit"], button.primary, button:has-text("OK"), button:has-text("Confirm")')
+      .locator(
+        'button[type="submit"], button.primary, button:has-text("OK"), button:has-text("Confirm")'
+      )
       .first()
       .click();
   }
@@ -66,7 +68,9 @@ export class ModalComponent {
    */
   async clickSecondary() {
     await this.getModal()
-      .locator('button[type="button"]:has-text("Cancel"), button:has-text("Close"), button.secondary')
+      .locator(
+        'button[type="button"]:has-text("Cancel"), button:has-text("Close"), button.secondary'
+      )
       .first()
       .click();
   }

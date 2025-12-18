@@ -24,12 +24,12 @@ export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
 
   // Get Web Vitals if available
   const webVitals = await page.evaluate(() => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const metrics: any = {};
 
       if ('PerformanceObserver' in window) {
         // Observe paint entries
-        const paintObserver = new PerformanceObserver((list) => {
+        const paintObserver = new PerformanceObserver(list => {
           for (const entry of list.getEntries()) {
             if (entry.name === 'first-contentful-paint') {
               metrics.firstContentfulPaint = entry.startTime;
@@ -39,7 +39,7 @@ export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
         paintObserver.observe({ entryTypes: ['paint'] });
 
         // LCP
-        const lcpObserver = new PerformanceObserver((list) => {
+        const lcpObserver = new PerformanceObserver(list => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
           metrics.largestContentfulPaint = lastEntry.startTime;
@@ -63,10 +63,7 @@ export async function measurePageLoad(page: Page): Promise<PerformanceMetrics> {
 /**
  * Asserts page load time is within threshold
  */
-export async function assertLoadTime(
-  page: Page,
-  maxLoadTimeMs: number
-) {
+export async function assertLoadTime(page: Page, maxLoadTimeMs: number) {
   const metrics = await measurePageLoad(page);
   expect(metrics.loadTime).toBeLessThan(maxLoadTimeMs);
 }
@@ -92,11 +89,11 @@ export async function measureApiResponseTime(
 export async function monitorNetworkRequests(page: Page) {
   const requests: Array<{ url: string; method: string; duration: number }> = [];
 
-  page.on('request', (request) => {
+  page.on('request', request => {
     (request as any)._startTime = Date.now();
   });
 
-  page.on('response', (response) => {
+  page.on('response', response => {
     const request = response.request();
     const endTime = Date.now();
     const startTime = (request as any)._startTime || endTime;

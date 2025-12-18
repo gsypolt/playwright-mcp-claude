@@ -21,26 +21,32 @@ npm run grafana:open          # View results (if using Grafana)
 ## 🤖 Interactive Agents
 
 ### Test Generation Agent
+
 ```bash
 npx ts-node prompts/test-agent.ts
 ```
+
 - Generates API, UI, Performance, Storybook, or Component tests
 - Interactive CLI prompts for test details
 - Auto-creates test files in appropriate directory
 
 ### Aggregation Setup Agent
+
 ```bash
 npm run setup:aggregation
 ```
+
 - Configure Database, TestDino, or JSON aggregation
 - Automatic `.env` configuration
 - Docker setup assistance
 - Playwright config guidance
 
 ### GitHub Setup Agent
+
 ```bash
 npm run setup:github
 ```
+
 - Creates GitHub repository
 - Configures remote connection
 - Authenticates with GitHub
@@ -51,6 +57,7 @@ npm run setup:github
 ## 🧪 Testing Commands
 
 ### Run Tests
+
 ```bash
 npm test                       # Run all tests
 npm run test:ui               # Run tests in UI mode (interactive)
@@ -59,6 +66,7 @@ npm run test:debug            # Debug mode with step-through
 ```
 
 ### Test by Type
+
 ```bash
 npm run test:api              # API tests only
 npm run test:ui               # UI tests only
@@ -70,6 +78,7 @@ npm run test:agents           # Comprehensive agent test suite
 ```
 
 ### Test Reports
+
 ```bash
 npm run report                # Open HTML test report
 ```
@@ -79,6 +88,7 @@ npm run report                # Open HTML test report
 ## 📊 Aggregation Services
 
 ### Start/Stop Services
+
 ```bash
 npm run db:start              # Start PostgreSQL + Grafana
 npm run db:stop               # Stop all services
@@ -86,6 +96,7 @@ npm run db:reset              # Reset database (⚠️ deletes data!)
 ```
 
 ### Grafana
+
 ```bash
 npm run grafana:start         # Start Grafana only
 npm run grafana:open          # Open Grafana in browser (http://localhost:3000)
@@ -93,12 +104,14 @@ npm run grafana:open          # Open Grafana in browser (http://localhost:3000)
 ```
 
 ### Database Management
+
 ```bash
 npm run db:setup              # Initialize database schema
 docker-compose up -d postgres # Start PostgreSQL only
 ```
 
 ### Data Ingestion
+
 ```bash
 npm run ingest <file>         # Ingest JSON results to database
 # Example:
@@ -106,6 +119,7 @@ npm run ingest test-results/results.json
 ```
 
 ### TestDino
+
 ```bash
 npm run testdino:upload       # Upload results to TestDino manually
 ```
@@ -115,6 +129,7 @@ npm run testdino:upload       # Upload results to TestDino manually
 ## 🐳 Docker Commands
 
 ### Service Management
+
 ```bash
 docker-compose up -d          # Start all services (PostgreSQL + Grafana)
 docker-compose down           # Stop all services
@@ -124,6 +139,7 @@ docker-compose logs -f        # View all service logs
 ```
 
 ### Individual Services
+
 ```bash
 docker-compose up -d postgres # Start PostgreSQL only
 docker-compose up -d grafana  # Start Grafana only
@@ -132,6 +148,7 @@ docker-compose logs -f grafana  # View Grafana logs
 ```
 
 ### Database Access
+
 ```bash
 # Access PostgreSQL CLI
 docker-compose exec postgres psql -U postgres -d playwright_results
@@ -143,6 +160,7 @@ docker-compose exec postgres psql -U postgres -d playwright_results
 ```
 
 ### Service URLs
+
 - **Grafana**: http://localhost:3000 (admin/admin)
 - **PostgreSQL**: localhost:5432
 - **PgAdmin** (optional): http://localhost:5050
@@ -152,6 +170,7 @@ docker-compose exec postgres psql -U postgres -d playwright_results
 ## 🔍 Database Queries
 
 ### Quick Queries
+
 ```bash
 # Inside PostgreSQL (docker-compose exec postgres psql -U postgres -d playwright_results)
 
@@ -181,28 +200,33 @@ SELECT * FROM test_trends_30d;
 ## 🎨 Code Quality
 
 ### Linting
+
 ```bash
 npm run lint                  # Check for linting issues
 npm run lint:fix              # Auto-fix linting issues
 ```
 
 ### Formatting
+
 ```bash
 npm run format                # Format all files
 npm run format:check          # Check formatting without changes
 ```
 
 ### Pre-commit
+
 ```bash
 npm run prepare               # Setup Husky git hooks
 ```
-*Pre-commit hooks automatically run on `git commit`*
+
+_Pre-commit hooks automatically run on `git commit`_
 
 ---
 
 ## 📦 Release Management
 
 ### Create Release
+
 ```bash
 npm run release               # Auto-detect version bump
 npm run release:patch         # Patch: 1.0.0 → 1.0.1
@@ -211,16 +235,19 @@ npm run release:major         # Major: 1.0.0 → 2.0.0
 ```
 
 ### Publish Release
+
 ```bash
 git push --follow-tags origin main
 ```
-*GitHub Actions will automatically create a release*
+
+_GitHub Actions will automatically create a release_
 
 ---
 
 ## 🔧 Development
 
 ### Dependencies
+
 ```bash
 npm install                   # Install dependencies (first time or after pulling changes)
 npm ci                        # Clean install (CI/CD, requires package-lock.json)
@@ -229,6 +256,7 @@ npx playwright install        # Install/update browsers
 ```
 
 ### TypeScript
+
 ```bash
 npx tsc --noEmit             # Type check without compilation
 ```
@@ -238,6 +266,7 @@ npx tsc --noEmit             # Type check without compilation
 ## 📚 Common Workflows
 
 ### First Time Setup
+
 ```bash
 git clone <repo-url>
 cd playwright-mcp-claude
@@ -252,6 +281,7 @@ npm run grafana:open         # View results
 ```
 
 ### Daily Development
+
 ```bash
 npm run db:start             # Start services (if not running)
 npx ts-node prompts/test-agent.ts  # Generate new test
@@ -262,6 +292,7 @@ npm run db:stop              # Stop services when done
 ```
 
 ### Generate and Run Test
+
 ```bash
 npx ts-node prompts/test-agent.ts  # Generate test
 npm test tests/ui/my-test.ui.spec.ts  # Run specific test
@@ -269,12 +300,14 @@ npm run test:ui              # Or run in UI mode
 ```
 
 ### Debug Failing Test
+
 ```bash
 npm run test:debug           # Debug mode
 npm run test:headed          # Run with visible browser
 ```
 
 ### CI/CD Workflow
+
 ```bash
 npm run lint                 # Lint code
 npm test                     # Run all tests
@@ -282,6 +315,7 @@ npm run ingest test-results/results.json  # Ingest results
 ```
 
 ### Release Workflow
+
 ```bash
 git add .
 git commit -m "feat: add new feature"  # Conventional commit
@@ -294,6 +328,7 @@ git push --follow-tags origin main     # Trigger GitHub release
 ## 🆘 Troubleshooting
 
 ### Reset Everything
+
 ```bash
 npm run db:reset             # Reset database
 rm -rf node_modules package-lock.json
@@ -302,22 +337,26 @@ npx playwright install       # Reinstall browsers
 ```
 
 ### Check Service Status
+
 ```bash
 docker-compose ps            # View running services
 docker-compose logs -f       # View service logs
 ```
 
 ### Verify Database Connection
+
 ```bash
 docker-compose exec postgres psql -U postgres -d playwright_results -c "SELECT version();"
 ```
 
 ### View Grafana Logs
+
 ```bash
 docker-compose logs -f grafana
 ```
 
 ### Fix Linting Issues
+
 ```bash
 npm run lint:fix
 npm run format
@@ -327,25 +366,27 @@ npm run format
 
 ## 🔗 Quick Links
 
-| Resource | Command |
-|----------|---------|
-| Grafana Dashboard | `npm run grafana:open` |
-| HTML Test Report | `npm run report` |
-| PostgreSQL CLI | `docker-compose exec postgres psql -U postgres -d playwright_results` |
-| Service Status | `docker-compose ps` |
-| Service Logs | `docker-compose logs -f` |
+| Resource          | Command                                                               |
+| ----------------- | --------------------------------------------------------------------- |
+| Grafana Dashboard | `npm run grafana:open`                                                |
+| HTML Test Report  | `npm run report`                                                      |
+| PostgreSQL CLI    | `docker-compose exec postgres psql -U postgres -d playwright_results` |
+| Service Status    | `docker-compose ps`                                                   |
+| Service Logs      | `docker-compose logs -f`                                              |
 
 ---
 
 ## 📋 Environment Variables
 
 ### Required for Testing
+
 ```env
 BASE_URL=http://localhost:3000
 API_BASE_URL=http://localhost:3000/api
 ```
 
 ### For Aggregation (Database)
+
 ```env
 AGGREGATION_METHOD=database
 DB_TYPE=postgresql
@@ -357,6 +398,7 @@ DB_PASSWORD=postgres
 ```
 
 ### For Aggregation (TestDino)
+
 ```env
 AGGREGATION_METHOD=testdino
 TESTDINO_API_KEY=your-api-key
@@ -364,6 +406,7 @@ TESTDINO_PROJECT_ID=your-project-id
 ```
 
 ### For Aggregation (JSON)
+
 ```env
 AGGREGATION_METHOD=json
 JSON_OUTPUT_PATH=./test-results/aggregated-results.json
@@ -409,4 +452,4 @@ npm run db:stop             # Stop services
 
 ---
 
-*Last updated: 2025-01-17*
+_Last updated: 2025-01-17_

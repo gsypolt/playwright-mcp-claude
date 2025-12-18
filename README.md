@@ -256,6 +256,7 @@ npm run setup:aggregation
 ```
 
 The agent will help you:
+
 - Choose between Database, TestDino, or JSON export
 - Configure your environment automatically
 - Set up Docker (if using Database + Grafana)
@@ -278,6 +279,7 @@ npm run grafana:open
 ```
 
 Features:
+
 - ✅ Unlimited historical data
 - ✅ Custom Grafana dashboards
 - ✅ Advanced SQL queries
@@ -297,6 +299,7 @@ npm test
 ```
 
 Features:
+
 - ✅ AI-powered failure analysis
 - ✅ Managed service (no infrastructure)
 - ✅ Team collaboration
@@ -313,6 +316,7 @@ npm run ingest test-results/results.json
 ```
 
 Features:
+
 - ✅ Maximum flexibility
 - ✅ CI/CD friendly
 - ✅ No real-time dependency
@@ -332,6 +336,7 @@ The included Grafana dashboard provides:
 ### Database Schema
 
 Automatically tracks:
+
 - Test runs with CI/CD metadata
 - Individual test results
 - Test attachments (screenshots, videos)
@@ -341,17 +346,20 @@ Automatically tracks:
 ### Example Queries
 
 **Find flaky tests:**
+
 ```sql
 SELECT * FROM most_flaky_tests LIMIT 10;
 ```
 
 **Get pass rate trend:**
+
 ```sql
 SELECT * FROM test_pass_rate_daily
 WHERE test_date >= CURRENT_DATE - INTERVAL '30 days';
 ```
 
 **Find slowest tests:**
+
 ```sql
 SELECT * FROM slowest_tests LIMIT 10;
 ```

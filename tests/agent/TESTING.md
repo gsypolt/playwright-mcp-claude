@@ -13,6 +13,7 @@ npx playwright test tests/agent/agent-integration.spec.ts --project=chromium
 ```
 
 **Tests Included:**
+
 - ✅ Test agent starts and displays menu
 - ✅ Test agent generates API test with valid input
 - ✅ Aggregation agent starts and displays menu
@@ -36,11 +37,13 @@ npx playwright test tests/agent/test-agent.spec.ts --project=chromium
 ### Test Agent Manual Verification
 
 1. **Start the test agent:**
+
    ```bash
    npx ts-node prompts/test-agent.ts
    ```
 
 2. **Expected Output:**
+
    ```
    =================================
      Playwright Test Generator
@@ -97,11 +100,13 @@ npx playwright test tests/agent/test-agent.spec.ts --project=chromium
 ### Aggregation Agent Manual Verification
 
 1. **Start the aggregation agent:**
+
    ```bash
    npm run setup:aggregation
    ```
 
 2. **Expected Output:**
+
    ```
    📊 Test Results Aggregation Setup
 
@@ -170,18 +175,23 @@ After running tests, verify:
 ## Common Issues
 
 ### Issue: "Unknown file extension .ts"
+
 **Solution:** Run `npm install ts-node --save-dev` and ensure tsconfig.json has CommonJS module setting.
 
 ### Issue: Agent doesn't start
+
 **Solution:**
+
 - Verify TypeScript is installed: `npm list typescript`
 - Verify ts-node is installed: `npm list ts-node`
 - Check for syntax errors: `npx tsc --noEmit`
 
 ### Issue: Generated tests have syntax errors
+
 **Solution:** Check that templates in `prompts/test-agent.ts` are valid TypeScript.
 
 ### Issue: .env file not updated
+
 **Solution:** Verify `.env` file exists and has write permissions.
 
 ## Clean Up Generated Tests
@@ -211,11 +221,13 @@ npx playwright test tests/agent/agent-integration.spec.ts --reporter=line --proj
 ```
 
 Expected output:
+
 ```
   7 passed (11.8s)
 ```
 
 All integration tests should pass, verifying:
+
 - ✅ Agents start correctly
 - ✅ Menus display properly
 - ✅ File generation works

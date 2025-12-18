@@ -13,11 +13,13 @@ This guide will help you create a GitHub repository and connect your local proje
 ### Install GitHub CLI
 
 **macOS:**
+
 ```bash
 brew install gh
 ```
 
 **Linux:**
+
 ```bash
 # Debian/Ubuntu
 sudo apt install gh
@@ -27,6 +29,7 @@ sudo dnf install gh
 ```
 
 **Windows:**
+
 ```bash
 winget install --id GitHub.cli
 ```
@@ -38,6 +41,7 @@ gh auth login
 ```
 
 Follow the prompts:
+
 1. Choose "GitHub.com"
 2. Choose "HTTPS" or "SSH" (HTTPS is easier)
 3. Choose "Login with a web browser"
@@ -65,6 +69,7 @@ git push -u origin main
 ```
 
 **Options:**
+
 - `--public` - Make repository public (use `--private` for private)
 - `--source=.` - Use current directory as source
 - `--remote=origin` - Set remote name to 'origin'

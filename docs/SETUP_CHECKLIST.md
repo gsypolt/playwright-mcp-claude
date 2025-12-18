@@ -5,6 +5,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ Initial Setup
 
 - [ ] **Clone Repository**
+
   ```bash
   git clone <your-repo-url>
   cd playwright-mcp-claude
@@ -15,6 +16,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
   - Verify npm: `npm --version`
 
 - [ ] **Install Dependencies**
+
   ```bash
   npm install
   ```
@@ -27,12 +29,13 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ Configuration
 
 - [ ] **Create .env File**
+
   ```bash
   cp .env.example .env
   ```
 
 - [ ] **Configure Environment Variables**
-  Edit `.env` and set:
+      Edit `.env` and set:
   - [ ] `BASE_URL` - Your application URL
   - [ ] `API_BASE_URL` - Your API URL
   - [ ] `TEST_USER_EMAIL` - Test user email
@@ -51,16 +54,19 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ Verification
 
 - [ ] **Run Setup Verification Script**
+
   ```bash
   ./scripts/verify-setup.sh
   ```
 
 - [ ] **Check TypeScript Compilation**
+
   ```bash
   npx tsc --noEmit
   ```
 
 - [ ] **Run Linter**
+
   ```bash
   npm run lint
   ```
@@ -73,6 +79,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ Test Execution
 
 - [ ] **Run All Tests**
+
   ```bash
   npm test
   ```
@@ -91,9 +98,11 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ Test Generation
 
 - [ ] **Try Interactive Agent**
+
   ```bash
   npx ts-node prompts/test-agent.ts
   ```
+
   - [ ] Select a test type
   - [ ] Enter test name
   - [ ] Enter description
@@ -121,6 +130,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
 ## ✅ CI/CD Setup (GitHub)
 
 - [ ] **Push to GitHub**
+
   ```bash
   git remote add origin <your-repo-url>
   git push -u origin main
@@ -170,6 +180,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
   - [ ] Add assertions
 
 - [ ] **Run Test**
+
   ```bash
   npm test path/to/your/test.spec.ts
   ```
@@ -186,6 +197,7 @@ Use this checklist to ensure your Playwright MCP Claude project is properly set 
   - [ ] Follow commit message format
 
 - [ ] **Create First Release**
+
   ```bash
   npm run release
   git push --follow-tags origin main
@@ -236,18 +248,22 @@ npm run release
 ### Troubleshooting
 
 **Tests failing?**
+
 - Check `.env` configuration
 - Verify BASE_URL is correct
 - Ensure application is running
 
 **Linting errors?**
+
 - Run `npm run lint:fix`
 - Check ESLint configuration
 
 **TypeScript errors?**
+
 - Run `npm install`
 - Check tsconfig.json
 
 **Playwright issues?**
+
 - Run `npx playwright install`
 - Update Playwright: `npm update @playwright/test`

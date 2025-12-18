@@ -17,11 +17,11 @@ This guide explains how to aggregate and visualize your Playwright test results 
 
 Choose the aggregation method that best fits your needs:
 
-| Method | Best For | Setup Complexity | Features |
-|--------|----------|------------------|----------|
-| **Database + Grafana** | Long-term historical insights, custom dashboards | Medium | Full control, unlimited history, custom queries |
-| **TestDino** | Batteries-included experience, AI insights | Low | AI-powered analysis, managed service |
-| **JSON Export** | CI/CD integration, minimal infrastructure | Low | Simple, portable, works anywhere |
+| Method                 | Best For                                         | Setup Complexity | Features                                        |
+| ---------------------- | ------------------------------------------------ | ---------------- | ----------------------------------------------- |
+| **Database + Grafana** | Long-term historical insights, custom dashboards | Medium           | Full control, unlimited history, custom queries |
+| **TestDino**           | Batteries-included experience, AI insights       | Low              | AI-powered analysis, managed service            |
+| **JSON Export**        | CI/CD integration, minimal infrastructure        | Low              | Simple, portable, works anywhere                |
 
 ---
 
@@ -52,6 +52,7 @@ docker-compose up -d
 ```
 
 This starts:
+
 - PostgreSQL (port 5432)
 - Grafana (port 3000)
 - PgAdmin (port 5050, optional)
@@ -77,10 +78,7 @@ DB_SSL=false
 import { DatabaseReporter } from './reporters/database-reporter';
 
 export default defineConfig({
-  reporter: [
-    ['html'],
-    [DatabaseReporter],
-  ],
+  reporter: [['html'], [DatabaseReporter]],
   // ... other config
 });
 ```
@@ -94,10 +92,12 @@ npm test
 5. **View Grafana dashboard**:
 
 Open http://localhost:3000
+
 - Username: `admin`
 - Password: `admin` (or your configured password)
 
 The dashboard is pre-configured with:
+
 - Pass/Fail rate trends
 - Test duration trends
 - Flakiness detection
@@ -110,12 +110,14 @@ The dashboard is pre-configured with:
 #### 1. Install PostgreSQL
 
 **macOS**:
+
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
 ```
 
 **Ubuntu**:
+
 ```bash
 sudo apt update
 sudo apt install postgresql postgresql-contrib
@@ -138,12 +140,14 @@ npm install pg mysql2 --save-dev
 #### 4. Install Grafana
 
 **macOS**:
+
 ```bash
 brew install grafana
 brew services start grafana
 ```
 
 **Ubuntu**:
+
 ```bash
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
@@ -177,21 +181,25 @@ The schema includes:
 ### Custom Queries
 
 **Find most flaky tests**:
+
 ```sql
 SELECT * FROM most_flaky_tests LIMIT 10;
 ```
 
 **Get pass rate by day**:
+
 ```sql
 SELECT * FROM test_pass_rate_daily ORDER BY test_date DESC;
 ```
 
 **Find slowest tests**:
+
 ```sql
 SELECT * FROM slowest_tests LIMIT 10;
 ```
 
 **Performance trends**:
+
 ```sql
 SELECT
   DATE(tr.started_at) as date,
@@ -246,10 +254,7 @@ TESTDINO_PROJECT_ID=your-project-id
 import { TestDinoReporter } from './reporters/testdino-reporter';
 
 export default defineConfig({
-  reporter: [
-    ['html'],
-    [TestDinoReporter],
-  ],
+  reporter: [['html'], [TestDinoReporter]],
   // ... other config
 });
 ```
@@ -301,10 +306,7 @@ Export test results to JSON and ingest into your database using a separate scrip
 ```typescript
 // playwright.config.ts
 export default defineConfig({
-  reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results/results.json' }],
-  ],
+  reporter: [['html'], ['json', { outputFile: 'test-results/results.json' }]],
   // ... other config
 });
 ```
@@ -433,17 +435,17 @@ test:
 
 ### Feature Comparison
 
-| Feature | Database + Grafana | TestDino | JSON Export |
-|---------|-------------------|----------|-------------|
-| Setup Time | 30-60 min | 5 min | 10 min |
-| Infrastructure | Self-managed | Managed | Self-managed |
-| Cost | Free (self-hosted) | Paid | Free |
-| AI Insights | No | Yes | No |
-| Custom Dashboards | Unlimited | Limited | Depends |
-| Data Retention | Unlimited | Plan-based | Unlimited |
-| Historical Analysis | Yes | Yes | Yes |
-| Flakiness Detection | Automatic | AI-powered | Manual queries |
-| Team Features | Limited | Yes | No |
+| Feature             | Database + Grafana | TestDino   | JSON Export    |
+| ------------------- | ------------------ | ---------- | -------------- |
+| Setup Time          | 30-60 min          | 5 min      | 10 min         |
+| Infrastructure      | Self-managed       | Managed    | Self-managed   |
+| Cost                | Free (self-hosted) | Paid       | Free           |
+| AI Insights         | No                 | Yes        | No             |
+| Custom Dashboards   | Unlimited          | Limited    | Depends        |
+| Data Retention      | Unlimited          | Plan-based | Unlimited      |
+| Historical Analysis | Yes                | Yes        | Yes            |
+| Flakiness Detection | Automatic          | AI-powered | Manual queries |
+| Team Features       | Limited            | Yes        | No             |
 
 ---
 
@@ -536,12 +538,14 @@ curl -H "Authorization: Bearer $TESTDINO_API_KEY" \
 ## Best Practices
 
 1. **Use environment-specific configurations**:
+
    ```env
    AGGREGATION_METHOD=database  # dev
    AGGREGATION_METHOD=testdino  # production
    ```
 
 2. **Implement data retention policies**:
+
    ```sql
    -- Delete old test results (keep last 90 days)
    DELETE FROM test_results
@@ -549,6 +553,7 @@ curl -H "Authorization: Bearer $TESTDINO_API_KEY" \
    ```
 
 3. **Monitor database size**:
+
    ```sql
    SELECT pg_size_pretty(pg_database_size('playwright_results'));
    ```

@@ -30,6 +30,7 @@ npx ts-node prompts/test-agent.ts
 ```
 
 Follow the prompts:
+
 1. Select test type (API, UI, Performance, etc.)
 2. Enter test name
 3. Enter test description
@@ -210,6 +211,7 @@ npx ts-node prompts/test-agent.ts
 ### Tests failing with "baseURL is not set"
 
 Update `.env` file:
+
 ```env
 BASE_URL=http://localhost:3000
 ```
@@ -217,6 +219,7 @@ BASE_URL=http://localhost:3000
 ### Authentication tests failing
 
 Update credentials in `.env`:
+
 ```env
 TEST_USER_EMAIL=your-email
 TEST_USER_PASSWORD=your-password

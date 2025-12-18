@@ -42,7 +42,10 @@ test.describe('${testName} - API Tests', () => {
     await fs.writeFile(testFile, content, 'utf-8');
 
     // Verify file was created
-    const fileExists = await fs.access(testFile).then(() => true).catch(() => false);
+    const fileExists = await fs
+      .access(testFile)
+      .then(() => true)
+      .catch(() => false);
     expect(fileExists).toBe(true);
 
     // Verify content
@@ -90,7 +93,10 @@ test.describe('${testName} - UI Tests', () => {
 
     await fs.writeFile(testFile, content, 'utf-8');
 
-    const fileExists = await fs.access(testFile).then(() => true).catch(() => false);
+    const fileExists = await fs
+      .access(testFile)
+      .then(() => true)
+      .catch(() => false);
     expect(fileExists).toBe(true);
 
     const fileContent = await fs.readFile(testFile, 'utf-8');
@@ -128,7 +134,10 @@ test.describe('${testName} - Performance Tests', () => {
 
     await fs.writeFile(testFile, content, 'utf-8');
 
-    const fileExists = await fs.access(testFile).then(() => true).catch(() => false);
+    const fileExists = await fs
+      .access(testFile)
+      .then(() => true)
+      .catch(() => false);
     expect(fileExists).toBe(true);
 
     const fileContent = await fs.readFile(testFile, 'utf-8');

@@ -27,7 +27,11 @@ export class ApiHelper {
   /**
    * Performs a POST request
    */
-  async post<T = unknown>(url: string, data?: unknown, options?: Record<string, unknown>): Promise<ApiResponse<T>> {
+  async post<T = unknown>(
+    url: string,
+    data?: unknown,
+    options?: Record<string, unknown>
+  ): Promise<ApiResponse<T>> {
     const response = await this.request.post(url, {
       data,
       ...options,

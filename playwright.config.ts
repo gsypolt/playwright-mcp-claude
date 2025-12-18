@@ -13,7 +13,7 @@ export default defineConfig({
     ['html'],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
-    ['list']
+    ['list'],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:3000',

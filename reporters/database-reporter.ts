@@ -208,7 +208,8 @@ export class DatabaseReporter implements Reporter {
     ];
 
     const insertResult = await this.executeQuery(query, values);
-    const resultId = this.dbType === 'postgresql' ? insertResult.rows[0].id : insertResult[0].insertId;
+    const resultId =
+      this.dbType === 'postgresql' ? insertResult.rows[0].id : insertResult[0].insertId;
 
     // Insert performance metrics if this is a performance test
     if (this.inferTestType(test.location.file) === 'performance') {
@@ -273,7 +274,9 @@ export class DatabaseReporter implements Reporter {
     await this.executeQuery(query, values);
 
     console.log(`[DatabaseReporter] Test run completed: ${this.runId}`);
-    console.log(`  Passed: ${stats.passed}, Failed: ${stats.failed}, Skipped: ${stats.skipped}, Flaky: ${stats.flaky}`);
+    console.log(
+      `  Passed: ${stats.passed}, Failed: ${stats.failed}, Skipped: ${stats.skipped}, Flaky: ${stats.flaky}`
+    );
 
     await this.closeDatabase();
   }

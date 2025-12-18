@@ -159,7 +159,7 @@ export class TestDinoReporter implements Reporter {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`,
+          Authorization: `Bearer ${this.config.apiKey}`,
           'X-Project-ID': this.config.projectId,
         },
         body: JSON.stringify(result),
@@ -170,7 +170,7 @@ export class TestDinoReporter implements Reporter {
         throw new Error(`Upload failed: ${response.status} - ${error}`);
       }
 
-      const data = await response.json() as { url?: string };
+      const data = (await response.json()) as { url?: string };
       console.log(`[TestDinoReporter] ✓ Results uploaded successfully`);
       console.log(`  View results: ${data.url || 'https://testdino.com/results/' + this.runId}`);
     } catch (error) {
@@ -209,7 +209,7 @@ export async function uploadToTestDino(resultsPath: string, config?: TestDinoCon
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${testDinoConfig.apiKey}`,
+      Authorization: `Bearer ${testDinoConfig.apiKey}`,
       'X-Project-ID': testDinoConfig.projectId,
     },
     body: resultsData,
@@ -220,7 +220,7 @@ export async function uploadToTestDino(resultsPath: string, config?: TestDinoCon
     throw new Error(`Upload failed: ${response.status} - ${error}`);
   }
 
-  const data = await response.json() as { url?: string };
+  const data = (await response.json()) as { url?: string };
   console.log('✓ Upload successful');
   console.log(`View results: ${data.url || 'https://testdino.com'}`);
 

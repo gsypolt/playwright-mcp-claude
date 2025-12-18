@@ -32,10 +32,32 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Test 2: Test Agent Execution"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if timeout 3s npx ts-node prompts/test-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
-    echo -e "${GREEN}✓ Test agent starts successfully${NC}"
+# Check if timeout command exists
+if command -v timeout &> /dev/null; then
+    if timeout 3s npx ts-node prompts/test-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
+        echo -e "${GREEN}✓ Test agent starts successfully${NC}"
+    else
+        echo -e "${RED}✗ Test agent failed to start${NC}"
+        exit 1
+    fi
+elif command -v gtimeout &> /dev/null; then
+    # macOS with GNU coreutils installed via brew
+    if gtimeout 3s npx ts-node prompts/test-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
+        echo -e "${GREEN}✓ Test agent starts successfully${NC}"
+    else
+        echo -e "${RED}✗ Test agent failed to start${NC}"
+        exit 1
+    fi
 else
-    echo -e "${YELLOW}⚠ Test agent execution check skipped (timeout not available)${NC}"
+    # Use Perl as fallback (available on macOS)
+    if perl -e 'alarm 3; exec @ARGV' npx ts-node prompts/test-agent.ts > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Test agent starts successfully${NC}"
+    elif [ $? -eq 142 ] || [ $? -eq 14 ]; then
+        # Exit code 142 (SIGALRM) or 14 means timeout triggered, which is expected
+        echo -e "${GREEN}✓ Test agent starts successfully${NC}"
+    else
+        echo -e "${YELLOW}⚠ Test agent execution check skipped (could not verify)${NC}"
+    fi
 fi
 echo ""
 
@@ -43,10 +65,32 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Test 3: Aggregation Agent Execution"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-if timeout 3s npx ts-node prompts/aggregation-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
-    echo -e "${GREEN}✓ Aggregation agent starts successfully${NC}"
+# Check if timeout command exists
+if command -v timeout &> /dev/null; then
+    if timeout 3s npx ts-node prompts/aggregation-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
+        echo -e "${GREEN}✓ Aggregation agent starts successfully${NC}"
+    else
+        echo -e "${RED}✗ Aggregation agent failed to start${NC}"
+        exit 1
+    fi
+elif command -v gtimeout &> /dev/null; then
+    # macOS with GNU coreutils installed via brew
+    if gtimeout 3s npx ts-node prompts/aggregation-agent.ts > /dev/null 2>&1 || [ $? -eq 124 ]; then
+        echo -e "${GREEN}✓ Aggregation agent starts successfully${NC}"
+    else
+        echo -e "${RED}✗ Aggregation agent failed to start${NC}"
+        exit 1
+    fi
 else
-    echo -e "${YELLOW}⚠ Aggregation agent execution check skipped (timeout not available)${NC}"
+    # Use Perl as fallback (available on macOS)
+    if perl -e 'alarm 3; exec @ARGV' npx ts-node prompts/aggregation-agent.ts > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Aggregation agent starts successfully${NC}"
+    elif [ $? -eq 142 ] || [ $? -eq 14 ]; then
+        # Exit code 142 (SIGALRM) or 14 means timeout triggered, which is expected
+        echo -e "${GREEN}✓ Aggregation agent starts successfully${NC}"
+    else
+        echo -e "${YELLOW}⚠ Aggregation agent execution check skipped (could not verify)${NC}"
+    fi
 fi
 echo ""
 
