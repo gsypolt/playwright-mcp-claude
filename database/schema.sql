@@ -1,5 +1,5 @@
 -- Playwright Test Results Database Schema
--- Supports PostgreSQL and MySQL (with minor adjustments)
+-- PostgreSQL Compatible
 
 -- Test Runs Table
 CREATE TABLE IF NOT EXISTS test_runs (
@@ -20,11 +20,7 @@ CREATE TABLE IF NOT EXISTS test_runs (
     failed_tests INTEGER DEFAULT 0,
     skipped_tests INTEGER DEFAULT 0,
     flaky_tests INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_run_id (run_id),
-    INDEX idx_started_at (started_at),
-    INDEX idx_branch (branch_name),
-    INDEX idx_status (status)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Test Cases Table
@@ -39,10 +35,7 @@ CREATE TABLE IF NOT EXISTS test_cases (
     tags TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_test (test_id, file_path, project_name, browser),
-    INDEX idx_test_id (test_id),
-    INDEX idx_file_path (file_path),
-    INDEX idx_test_type (test_type)
+    UNIQUE (test_id, file_path, project_name, browser)
 );
 
 -- Test Results Table
@@ -60,11 +53,7 @@ CREATE TABLE IF NOT EXISTS test_results (
     started_at TIMESTAMP,
     finished_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE,
-    INDEX idx_run_id (run_id),
-    INDEX idx_test_case_id (test_case_id),
-    INDEX idx_status (status),
-    INDEX idx_started_at (started_at)
+    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE
 );
 
 -- Test Attachments Table
@@ -76,8 +65,7 @@ CREATE TABLE IF NOT EXISTS test_attachments (
     path VARCHAR(500),
     body BYTEA,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (test_result_id) REFERENCES test_results(id) ON DELETE CASCADE,
-    INDEX idx_test_result_id (test_result_id)
+    FOREIGN KEY (test_result_id) REFERENCES test_results(id) ON DELETE CASCADE
 );
 
 -- Test Metrics Table (for performance tests)
@@ -88,24 +76,20 @@ CREATE TABLE IF NOT EXISTS test_metrics (
     metric_value FLOAT,
     metric_unit VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (test_result_id) REFERENCES test_results(id) ON DELETE CASCADE,
-    INDEX idx_test_result_id (test_result_id),
-    INDEX idx_metric_name (metric_name)
+    FOREIGN KEY (test_result_id) REFERENCES test_results(id) ON DELETE CASCADE
 );
 
 -- Flaky Tests Tracking
 CREATE TABLE IF NOT EXISTS flaky_tests (
     id SERIAL PRIMARY KEY,
-    test_case_id INTEGER NOT NULL,
+    test_case_id INTEGER NOT NULL UNIQUE,
     first_detected TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_detected TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     occurrences INTEGER DEFAULT 1,
     pass_count INTEGER DEFAULT 0,
     fail_count INTEGER DEFAULT 0,
     flake_rate FLOAT,
-    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE,
-    INDEX idx_test_case_id (test_case_id),
-    INDEX idx_flake_rate (flake_rate)
+    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE
 );
 
 -- Views for Common Queries
@@ -172,8 +156,6 @@ GROUP BY DATE(tr.started_at), tc.test_type
 ORDER BY test_date DESC, tc.test_type;
 
 -- Functions for Flakiness Detection
-DELIMITER $$
-
 CREATE OR REPLACE FUNCTION update_flaky_tests()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -211,17 +193,44 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to automatically detect flaky tests
+DROP TRIGGER IF EXISTS detect_flaky_tests ON test_results;
 CREATE TRIGGER detect_flaky_tests
 AFTER INSERT ON test_results
 FOR EACH ROW
 EXECUTE FUNCTION update_flaky_tests();
 
-DELIMITER ;
-
 -- Indexes for Performance
-CREATE INDEX IF NOT EXISTS idx_test_results_composite ON test_results(test_case_id, status, started_at);
+
+-- Test Runs Indexes
+CREATE INDEX IF NOT EXISTS idx_run_id ON test_runs(run_id);
+CREATE INDEX IF NOT EXISTS idx_runs_started_at ON test_runs(started_at);
+CREATE INDEX IF NOT EXISTS idx_runs_branch ON test_runs(branch_name);
+CREATE INDEX IF NOT EXISTS idx_runs_status ON test_runs(status);
 CREATE INDEX IF NOT EXISTS idx_test_runs_composite ON test_runs(project_name, branch_name, started_at);
+
+-- Test Cases Indexes
+CREATE INDEX IF NOT EXISTS idx_test_id ON test_cases(test_id);
+CREATE INDEX IF NOT EXISTS idx_file_path ON test_cases(file_path);
+CREATE INDEX IF NOT EXISTS idx_test_type ON test_cases(test_type);
 CREATE INDEX IF NOT EXISTS idx_test_cases_composite ON test_cases(file_path, test_type, browser);
+
+-- Test Results Indexes
+CREATE INDEX IF NOT EXISTS idx_results_run_id ON test_results(run_id);
+CREATE INDEX IF NOT EXISTS idx_results_test_case_id ON test_results(test_case_id);
+CREATE INDEX IF NOT EXISTS idx_results_status ON test_results(status);
+CREATE INDEX IF NOT EXISTS idx_results_started_at ON test_results(started_at);
+CREATE INDEX IF NOT EXISTS idx_test_results_composite ON test_results(test_case_id, status, started_at);
+
+-- Test Attachments Indexes
+CREATE INDEX IF NOT EXISTS idx_attachments_test_result_id ON test_attachments(test_result_id);
+
+-- Test Metrics Indexes
+CREATE INDEX IF NOT EXISTS idx_metrics_test_result_id ON test_metrics(test_result_id);
+CREATE INDEX IF NOT EXISTS idx_metrics_metric_name ON test_metrics(metric_name);
+
+-- Flaky Tests Indexes
+CREATE INDEX IF NOT EXISTS idx_flaky_test_case_id ON flaky_tests(test_case_id);
+CREATE INDEX IF NOT EXISTS idx_flaky_rate ON flaky_tests(flake_rate);
 
 -- Comments for Documentation
 COMMENT ON TABLE test_runs IS 'Stores information about test suite executions';
