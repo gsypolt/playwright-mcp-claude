@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.3](https://github.com/gsypolt/playwright-mcp-claude/compare/v1.0.2...v1.0.3) (2025-12-19)
+
+
+### Bug Fixes
+
+* convert database schema from MySQL to PostgreSQL syntax ([ced3028](https://github.com/gsypolt/playwright-mcp-claude/commit/ced3028c29e4cde27216be3bb4964a248028c3d7))
+* resolve PR comment permission errors in test aggregation workflow ([6954405](https://github.com/gsypolt/playwright-mcp-claude/commit/6954405f3479ff7deeea4be7ba5c05cd3f05c374))
+
 ### [1.0.2](https://github.com/gsypolt/playwright-mcp-claude/compare/v1.0.1...v1.0.2) (2025-12-19)
 
 
