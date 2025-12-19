@@ -1,6 +1,6 @@
 {
   "name": "playwright-mcp-claude",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered test generation using Claude and Playwright MCP Server",
   "main": "index.js",
   "scripts": {

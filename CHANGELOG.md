@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+### 1.0.1 (2025-12-19)
+
+
+### Bug Fixes
+
+* add missing test directories and improve CI error reporting ([5a6efa7](https://github.com/gsypolt/playwright-mcp-claude/commit/5a6efa7eb856c8d91d10b71f5d55c6b136a73300))
+* improve test error messages and add GitHub Actions permissions ([b1f9570](https://github.com/gsypolt/playwright-mcp-claude/commit/b1f9570495b967494f6b15c0d4b3cd000ef39213))
+* resolve ESLint errors from CI workflow ([d1d1ffb](https://github.com/gsypolt/playwright-mcp-claude/commit/d1d1ffb94d5bc5ffac0652f7fe2ecd8f033e2ae4))
+* resolve test failures and improve cross-platform compatibility ([ad4a03c](https://github.com/gsypolt/playwright-mcp-claude/commit/ad4a03ceebecc6cb79ff1126753277187372e877))
+
+
+### Tests
+
+* skip flaky aggregation-agent test in parallel runs ([bb1851f](https://github.com/gsypolt/playwright-mcp-claude/commit/bb1851f78b387cc427c6f3277ce5fe78bd2dcdc2))
+
 ## [1.0.0] - 2025-01-01
 
 ### Features
