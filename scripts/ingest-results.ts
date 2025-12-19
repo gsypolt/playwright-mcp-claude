@@ -228,13 +228,15 @@ class ResultsIngester {
     `;
 
     const startedAt = new Date(result.startTime);
-    const finishedAt = new Date(startedAt.getTime() + result.duration);
+    // round duration to integer ms
+    const durationMs = Math.round(result.duration);
+    const finishedAt = new Date(startedAt.getTime() + durationMs);
 
     const values = [
       this.runId,
       testCaseId,
       result.status,
-      result.duration,
+      durationMs,
       result.retry,
       result.error?.message || null,
       result.error?.stack || null,
@@ -262,9 +264,10 @@ class ResultsIngester {
       WHERE run_id = $8
     `;
 
+    const durationMs = Math.round(report.stats.duration);
     const values = [
       endTime,
-      report.stats.duration,
+      durationMs,
       'completed',
       report.stats.expected,
       report.stats.unexpected,
