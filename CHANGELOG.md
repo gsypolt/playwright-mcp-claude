@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.2](https://github.com/gsypolt/playwright-mcp-claude/compare/v1.0.1...v1.0.2) (2025-12-19)
+
+
+### Bug Fixes
+
+* replace deprecated create-release action with modern alternative ([3255d4e](https://github.com/gsypolt/playwright-mcp-claude/commit/3255d4e4c67166364f67168467196b06203083c6))
+
 ### 1.0.1 (2025-12-19)
 
 
