@@ -149,7 +149,9 @@ jobs:
   test-with-testdino:
     name: Test and Upload to TestDino
     runs-on: ubuntu-latest
-    if: ${{ secrets.TESTDINO_API_KEY != '' }}
+    # Only run if TESTDINO_API_KEY secret is configured
+    # To enable: Add TESTDINO_API_KEY to repository secrets
+    if: false  # Set to true when TestDino integration is needed
 
     steps:
       - uses: actions/checkout@v4
